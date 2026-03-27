@@ -1,88 +1,148 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-<meta charset="utf-8">
-<title>小游戏</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hi</title>
+
 <style>
-  body { margin:0; background:#222; overflow:hidden; }
-  #msg {
-    position:absolute;
-    top:40%;
-    width:100%;
-    text-align:center;
-    color:white;
-    font-size:26px;
-    opacity:0;
-    transition:1s;
-  }
+body {
+  margin:0;
+  background:#0f0f14;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  text-align:center;
+}
+
+.container {
+  width:90%;
+  max-width:400px;
+}
+
+.fade {
+  opacity:0;
+  transform:translateY(20px);
+  transition: all 0.8s ease;
+}
+
+.show {
+  opacity:1;
+  transform:translateY(0);
+}
+
+button {
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btnA {
+  background:#ff6b81;
+  color:white;
+}
+
+.btnB {
+  background:#2c2c34;
+  color:#aaa;
+}
+
+button:active {
+  transform:scale(0.96);
+}
+
+.hidden {
+  display:none;
+}
 </style>
 </head>
 
 <body>
-<canvas id="game"></canvas>
-<div id="msg">你已经走到我这了，要不要聊两句？🙂</div>
+
+<div class="container">
+
+  <!-- 第一屏 -->
+  <div id="step1" class="fade">
+    <p style="font-size:20px;">
+      上次那句“没空交朋友”，说得有点太直接了
+    </p>
+    <button onclick="next()">继续</button>
+  </div>
+
+  <!-- 第二屏 -->
+  <div id="step2" class="hidden fade">
+    <p style="font-size:20px;">
+      如果重新来一次，你会怎么选？
+    </p>
+
+    <button class="btnA" onclick="chooseA()">再给一次机会</button>
+    <button class="btnB" onclick="chooseB()">就这样吧</button>
+  </div>
+
+  <!-- 结果A -->
+  <div id="resultA" class="hidden fade">
+    <p style="font-size:20px;">
+      那这次我不急着打扰🙂<br><br>
+      就当重新认识
+    </p>
+  </div>
+
+  <!-- 结果B -->
+  <div id="resultB" class="hidden fade">
+    <p style="font-size:20px;">
+      明白，那我就不打扰了🙂<br><br>
+      祝你一切顺利
+    </p>
+  </div>
+
+</div>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const step1 = document.getElementById("step1");
+const step2 = document.getElementById("step2");
+const resultA = document.getElementById("resultA");
+const resultB = document.getElementById("resultB");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// 初始动画
+setTimeout(()=>{
+  step1.classList.add("show");
+},300);
 
-// 玩家
-let player = { x:100, y:100, size:20 };
-
-// 目标（女生位置）
-let target = { x:canvas.width/2, y:canvas.height/2, size:25 };
-
-// 按键
-let keys = {};
-
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
-
-// 更新逻辑
-function update(){
-  if(keys["ArrowUp"]) player.y -= 3;
-  if(keys["ArrowDown"]) player.y += 3;
-  if(keys["ArrowLeft"]) player.x -= 3;
-  if(keys["ArrowRight"]) player.x += 3;
-
-  // 碰撞检测
-  let dx = player.x - target.x;
-  let dy = player.y - target.y;
-  let dist = Math.sqrt(dx*dx + dy*dy);
-
-  if(dist < 30){
-    document.getElementById("msg").style.opacity = 1;
-  }
+function next(){
+  step1.classList.remove("show");
+  setTimeout(()=>{
+    step1.classList.add("hidden");
+    step2.classList.remove("hidden");
+    setTimeout(()=> step2.classList.add("show"),50);
+  },500);
 }
 
-// 绘制
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // 玩家（蓝色）
-  ctx.fillStyle = "skyblue";
-  ctx.beginPath();
-  ctx.arc(player.x, player.y, player.size, 0, Math.PI*2);
-  ctx.fill();
-
-  // 目标（粉色）
-  ctx.fillStyle = "pink";
-  ctx.beginPath();
-  ctx.arc(target.x, target.y, target.size, 0, Math.PI*2);
-  ctx.fill();
+function chooseA(){
+  step2.classList.remove("show");
+  setTimeout(()=>{
+    step2.classList.add("hidden");
+    resultA.classList.remove("hidden");
+    setTimeout(()=> resultA.classList.add("show"),50);
+  },500);
 }
 
-// 游戏循环
-function loop(){
-  update();
-  draw();
-  requestAnimationFrame(loop);
+function chooseB(){
+  step2.classList.remove("show");
+  setTimeout(()=>{
+    step2.classList.add("hidden");
+    resultB.classList.remove("hidden");
+    setTimeout(()=> resultB.classList.add("show"),50);
+  },500);
 }
-
-loop();
 </script>
+
 </body>
 </html>
